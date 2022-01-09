@@ -3396,28 +3396,6 @@
 		};
 	};
 
-	schedutil {
-		domain@0 {
-			device_type = "freqvar-tune";
-			shared-cpus = "0-3";
-
-			boost_table = < 0 >;
-			up_rate_limit_table = < 5 >;
-			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 80 >;
-		};
-
-		domain@1 {
-			device_type = "freqvar-tune";
-			shared-cpus = "4-7";
-
-			boost_table = < 0 >;
-			up_rate_limit_table = < 5 >;
-			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 80 >;
-		};
-	};
-
 	cpufreq-ufc {
 		#define PM_QOS_MIN_LIMIT		0
 		#define PM_QOS_MIN_WO_BOOST_LIMIT	1
