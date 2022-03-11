@@ -14,6 +14,7 @@ supported.patchlevels=2021-04 -
 
 # shell variables
 block=auto;
+dtbblock=/dev/block/platform/13520000.ufs/by-name/dtb;
 is_slot_device=0;
 ramdisk_compression=auto;
 patch_vbmeta_flag=0;
@@ -104,4 +105,7 @@ umount /vendor
 split_boot;
 
 flash_boot;
+
+# Flash dtb
+flash_generic dtb;
 ## end boot install
