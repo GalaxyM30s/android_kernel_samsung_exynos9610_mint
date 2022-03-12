@@ -2,12 +2,12 @@
 
 ifdef CONFIG_SEC_A50_PROJECT
 dtb-y += exynos/exynos9610.dtb
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_00.dtbo
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_01.dtbo
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_02.dtbo
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_03.dtbo
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_04.dtbo
-dtbo-y += samsung/a50/exynos9610-a50_swa_open_06.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_00.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_01.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_02.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_03.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_04.dtbo
+dtbo-y += samsung/exynos9610-a50_swa_open_06.dtbo
 endif
 
 ifdef CONFIG_SEC_A50S_PROJECT
