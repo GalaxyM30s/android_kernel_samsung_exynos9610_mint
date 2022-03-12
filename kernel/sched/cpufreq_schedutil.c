@@ -32,6 +32,7 @@
  **/
 #define UTILAVG_KAIR_VARIANCE	16
 DECLARE_KAIRISTICS(cpufreq, 32, 25, 23, 25);
+#define KAIR_CLUSTER_TRAVERSING
 #endif
 
 unsigned long boosted_cpu_util(int cpu, unsigned long other_util);
@@ -71,6 +72,9 @@ struct sugov_policy {
 
 	bool limits_changed;
 	bool need_freq_update;
+#ifdef CONFIG_SCHED_KAIR_GLUE
+	bool be_stochastic;
+#endif
 };
 
 struct sugov_cpu {
@@ -869,7 +873,8 @@ tunables_init:
 					CONFIG_SCHEDUTIL_DOWN_RATE_LIMIT_LITTLE;
 	}
 #ifdef CONFIG_SCHED_KAIR_GLUE
-	tunables->fb_legacy = true;
+	tunables->fb_legacy = false;
+	sg_policy->be_stochastic = false;
 #endif
 
 	policy->governor_data = sg_policy;
@@ -909,6 +914,9 @@ static void sugov_exit(struct cpufreq_policy *policy)
 	struct sugov_policy *sg_policy = policy->governor_data;
 	struct sugov_tunables *tunables = sg_policy->tunables;
 	unsigned int count;
+#ifdef CONFIG_SCHED_KAIR_GLUE
+	struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, policy->cpu);
+#endif
 
 	mutex_lock(&global_tunables_lock);
 
@@ -916,6 +924,15 @@ static void sugov_exit(struct cpufreq_policy *policy)
 	policy->governor_data = NULL;
 	if (!count)
 		sugov_clear_global_tunables();
+
+#ifdef CONFIG_SCHED_KAIR_GLUE
+	if (sg_cpu->util_vessel) {
+		sg_cpu->util_vessel->finalizer(sg_cpu->util_vessel);
+		kair_obj_destructor(sg_cpu->util_vessel);
+		sg_cpu->util_vessel = NULL;
+	}
+	sg_policy->be_stochastic = false;
+#endif
 
 	if (sugov_save_policy(sg_policy))
 		goto out;
@@ -952,25 +969,45 @@ static int sugov_start(struct cpufreq_policy *policy)
 	for_each_cpu(cpu, policy->cpus) {
 		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
+#ifdef CONFIG_SCHED_KAIR_GLUE
+		if (cpu != policy->cpu) {
+			memset(sg_cpu, 0, sizeof(*sg_cpu));
+			goto skip_subcpus;
+		}
+
+		if (!sg_policy->be_stochastic) {
+			memset(alias, 0, KAIR_ALIAS_LEN);
+			sprintf(alias, "govern%d", cpu);
+			memset(sg_cpu, 0, sizeof(*sg_cpu));
+			sg_cpu->util_vessel =
+				kair_obj_creator(alias,
+						 UTILAVG_KAIR_VARIANCE,
+						 policy->cpuinfo.max_freq,
+						 policy->cpuinfo.min_freq,
+						 &kairistic_cpufreq);
+			if (sg_cpu->util_vessel->initializer(sg_cpu->util_vessel) < 0) {
+				sg_cpu->util_vessel->finalizer(sg_cpu->util_vessel);
+				kair_obj_destructor(sg_cpu->util_vessel);
+				sg_cpu->util_vessel = NULL;
+			}
+		} else {
+			struct kair_class *vptr = sg_cpu->util_vessel;
+			memset(sg_cpu, 0, sizeof(*sg_cpu));
+			sg_cpu->util_vessel = vptr;
+		}
+skip_subcpus:
+#else
 		memset(sg_cpu, 0, sizeof(*sg_cpu));
+#endif
 		sg_cpu->cpu = cpu;
 		sg_cpu->sg_policy = sg_policy;
 		sg_cpu->flags = 0;
 		sugov_start_slack(cpu);
+	}
 
 #ifdef CONFIG_SCHED_KAIR_GLUE
-		if (cpu == policy->cpu) {
-			memset(alias, 0, KAIR_ALIAS_LEN);
-			sprintf(alias, "govern%d", cpu);
-			sg_cpu->util_vessel = kair_obj_creator(alias,
-							       UTILAVG_KAIR_VARIANCE,
-							       policy->cpuinfo.max_freq,
-							       policy->cpuinfo.min_freq,
-							       &kairistic_cpufreq);
-			sg_cpu->util_vessel->initializer(sg_cpu->util_vessel);
-		}
+	sg_policy->be_stochastic = true;
 #endif
-	}
 
 	for_each_cpu(cpu, policy->cpus) {
 		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
@@ -997,9 +1034,7 @@ static void sugov_stop(struct cpufreq_policy *policy)
 	for_each_cpu(cpu, policy->cpus) {
 		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 		if (sg_cpu->util_vessel) {
-			sg_cpu->util_vessel->finalizer(sg_cpu->util_vessel);
-			kair_obj_destructor(sg_cpu->util_vessel);
-			sg_cpu->util_vessel = NULL;
+			sg_cpu->util_vessel->stopper(sg_cpu->util_vessel);
 		}
 	}
 #endif

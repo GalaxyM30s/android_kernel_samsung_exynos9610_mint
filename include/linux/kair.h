@@ -51,13 +51,6 @@
 #define KAIR_WINDOW_CNT_MASK		(0x000000000FFFFFFFUL)
 
 /**
- * bit-shift representation of KAIR capacity denominator
- * which is considered as the summation of each level's TPDF weight
- * multiplied by maximum randomness.
- **/
-#define KAIR_CAPA_DENOM_SHIFT		(7)
-
-/**
  *
  **/
 #define KAIR_DEF_RAND_NEUTRAL		(2)
@@ -242,10 +235,18 @@ struct kairistics {
  **/
 struct kair_class {
 	struct list_head	tpdf_cascade;
+	/**
+ 	 * bit-shift representation of KAIR capacity denominator
+ 	 * which is considered as the summation of each level's TPDF weight
+ 	 * multiplied by maximum randomness.
+ 	 **/
+	unsigned int		capa_denom;
 
 	/**
 	 * """ KAIR methods list """:
 	 * @initializer : self-initializer
+	 * @stopper	: stopping to learn tpdf, cleaning up.
+	 * @finalizer	: returning all resources.
 	 * @job_learner : learner of capacity-probability-density which is
 	 *		  actually conducting exclusive on-device learning
 	 *		  algorithm on the given capacity-random variable.
@@ -254,6 +255,7 @@ struct kair_class {
 	 * @cap_bettor  : returns betting capacity estimated.
 	 **/
 	int (*initializer)(struct kair_class *self);
+	void (*stopper)(struct kair_class *self);
 	void (*finalizer)(struct kair_class *self);
 	void (*job_learner)(struct kair_class *self, struct rand_var *v);
 	int (*job_inferer)(struct kair_class *self);
