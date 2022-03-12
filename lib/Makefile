@@ -265,6 +265,8 @@ obj-$(CONFIG_SBITMAP) += sbitmap.o
 obj-$(CONFIG_PARMAN) += parman.o
 
 obj-$(CONFIG_KAIR) += kair.o
+CFLAGS_kair.o   += -O0
+CFLAGS_kair.o += $(DISABLE_LTO)
 
 obj-$(CONFIG_DEBUG_SNAPSHOT) += debug-snapshot.o debug-snapshot-log.o debug-snapshot-utils.o \
 				debug-snapshot-pstore.o debug-snapshot-sysfs.o debug-snapshot-helper.o
