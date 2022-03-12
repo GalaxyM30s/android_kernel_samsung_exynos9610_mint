@@ -56,16 +56,6 @@
 		#size-cells = <1>;
 		ranges;
 
-		seclog_mem {
-			compatible = "exynos,seclog";
-			reg = <0x0 SECLOG_LOG_BUF_BASE SECLOG_LOG_BUF_TOTAL_SIZE>;
-		};
-
-		abox_rmem: abox_rmem@0xE9400000 {
-                        compatible = "exynos,abox_rmem";
-                        reg = <0x0 0xE9400000 0x2800000>;
-                };
-
 		ion_video_stream {
 			compatible = "exynos9820-ion";
 			size = <0x4800000>;
@@ -87,20 +77,10 @@
 			ion,alignment = <0x10000>;
 		};
 
-		sec_debug_magic {
-			compatible = "exynos,sec_debug_magic";
-			reg = <0x0 0x80000000 0x1000>;
-		};
-		
 		modem_if {
  			compatible = "exynos,modem_if";
 			reg = <0x0 0xED000000 0x8A00000>;
 		};
-
-		cp_ram_logging {
-			compatible = "exynos,cp_ram_logging";
-			reg = <0x0 0xF5A00000 0x1E00000>;
- 		};
 
 		chub_rmem: chub_rmem {
 			compatible = "exynos,chub_rmem";
