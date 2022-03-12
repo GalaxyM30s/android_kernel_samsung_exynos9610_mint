@@ -107,5 +107,6 @@ split_boot;
 flash_boot;
 
 # Flash dtb
+ui_print "  - Installing Exynos device tree blob (DTB)...";
 flash_generic dtb;
 ## end boot install
