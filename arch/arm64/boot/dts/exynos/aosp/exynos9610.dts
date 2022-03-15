@@ -3404,10 +3404,10 @@
 			device_type = "freqvar-tune";
 			shared-cpus = "4-7";
 
-			boost_table = < 20 1248000 10 1664000 5 2080000 0 >;
+			boost_table = < 20 1352000 10 1664000 5 2080000 0 >;
 			up_rate_limit_table = < 4 >;
 			down_rate_limit_table = < 2 >;
-			upscale_ratio_table = < 75 1456000 80 >;
+			upscale_ratio_table = < 75 1508000 80 >;
 		};
 	};
 
@@ -3528,7 +3528,7 @@
 			cal-id = <ACPM_DVFS_CPUCL1>;
 			dm-type = <DM_CPU_CL1>;
 
-			min-freq = <936000>;
+			min-freq = <1040000>;
 
 			/* PM QoS Class ID */
 			pm_qos-min-class = <5>;
