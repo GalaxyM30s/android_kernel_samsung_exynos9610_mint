@@ -383,8 +383,8 @@
 				};
 				/* big cores */
 				coregroup1 {
-					coverage-ratio = <15>;
-					active-ratio = <5>;
+					coverage-ratio = <20>;
+					active-ratio = <10>;
 				};
 			};
 
