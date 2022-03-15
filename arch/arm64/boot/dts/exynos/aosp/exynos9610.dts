@@ -3404,10 +3404,10 @@
 			device_type = "freqvar-tune";
 			shared-cpus = "4-7";
 
-			boost_table = < 20 1144000 15 1456000 5 1898000 1 >;
+			boost_table = < 15 1248000 10 1508000 5 1976000 1 >;
 			up_rate_limit_table = < 4 >;
 			down_rate_limit_table = < 2 >;
-			upscale_ratio_table = < 70 1144000 80 >;
+			upscale_ratio_table = < 75 1248000 80 >;
 		};
 	};
 
