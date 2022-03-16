@@ -130,7 +130,6 @@ jobs:
 
   snowcone:
     name: Build Lineage/AOSP 12
-    if: ${{ !contains(github.event.head_commit.message, '[skip rel]') }}
     runs-on: ubuntu-latest
 
     strategy:
