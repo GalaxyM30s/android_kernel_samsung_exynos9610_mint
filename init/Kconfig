@@ -16,6 +16,9 @@ config DEFCONFIG_LIST
 	default "$ARCH_DEFCONFIG"
 	default "arch/$ARCH/defconfig"
 
+config TOOLS_SUPPORT_RELR
+	bool "Declare tool support for RELR"
+
 config CONSTRUCTORS
 	bool
 	depends on !UML
@@ -108,6 +111,17 @@ config LOCALVERSION_AUTO
 	    $ git rev-parse --verify HEAD
 
 	  which is done within the script "scripts/setlocalversion".)
+
+config INLINE_OPTIMIZATION
+	bool "Optimize compiler inlining"
+	default n
+	help
+	  Inlining functions in the hot-path can help improve performance,
+	  while also increasing the final size of the kernel image. Setting
+	  this option informs the compiler to optimize inlining. Whether to
+	  inline for performance or reduced size is controlled via the
+	  optimize for size (CC_OPTIMIZE_FOR_SIZE) or optimize for
+	  performance (CC_OPTIMIZE_FOR_PERFORMANCE) configs.
 
 config HAVE_KERNEL_GZIP
 	bool
