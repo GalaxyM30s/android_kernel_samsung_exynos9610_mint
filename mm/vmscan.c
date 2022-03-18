@@ -164,12 +164,6 @@ int vm_swappiness = 60;
  */
 unsigned long vm_total_pages;
 
-#ifdef CONFIG_KSWAPD_CPU_AFFINITY_MASK
-char *kswapd_cpu_mask = CONFIG_KSWAPD_CPU_AFFINITY_MASK_VALUE;
-#else
-char *kswapd_cpu_mask = NULL;
-#endif
-
 static LIST_HEAD(shrinker_list);
 static DEFINE_SPINLOCK(shrinker_lock);
 static DEFINE_RWLOCK(shrinker_rwlock);
@@ -3837,7 +3831,7 @@ static int kswapd(void *p)
 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
 #endif
 
-	if (kswapd_cpu_mask == NULL && !cpumask_empty(cpumask))
+	if (!cpumask_empty(cpumask))
 		set_cpus_allowed_ptr(tsk, cpumask);
 	current->reclaim_state = &reclaim_state;
 
@@ -4050,22 +4044,6 @@ static int kswapd_cpu_online(unsigned int cpu)
 	return 0;
 }
 
-static int set_kswapd_cpu_mask(pg_data_t *pgdat)
-{
-	int ret = 0;
-	cpumask_t tmask;
-
-	if (!kswapd_cpu_mask)
-		return 0;
-
-	cpumask_clear(&tmask);
-	ret = cpumask_parse(kswapd_cpu_mask, &tmask);
-	if (ret)
-		return ret;
-
-	return set_cpus_allowed_ptr(pgdat->kswapd, &tmask);
-}
-
 /*
  * This kswapd start function will be called by init and node-hot-add.
  * On node-hot-add, kswapd will moved to proper cpus if cpus are hot-added.
@@ -4097,9 +4075,6 @@ int kswapd_run(int nid)
 		pgdat->kswapd = NULL;
 		kthread_stop(pgdat->kshrinkd);
 		pgdat->kshrinkd = NULL;
-	} else if (kswapd_cpu_mask) {
-		if (set_kswapd_cpu_mask(pgdat))
-			pr_warn("error setting kswapd cpu affinity mask\n");
 	}
 	return ret;
 }
