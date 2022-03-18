@@ -329,6 +329,7 @@ build_package() {
 
 	# Copy DTB image to package directory
 	mv $(pwd)/arch/arm64/boot/dtb_exynos.img $(pwd)/tools/make/package/dtb.img -f
+	mv $(pwd)/arch/arm64/boot/dtbo_exynos.img $(pwd)/tools/make/package/dtbo.img -f
 
 	# Make the manifest
 	touch $(pwd)/tools/make/package/mint.prop
