@@ -553,7 +553,13 @@ check_defconfig
 get_devicedb_info
 
 # All variants get semi-Knox while we're fixing compile issues
-merge_config partial-deknox
+if [[ ${BUILD_DEVICE_NAME} == 'm30s' ]]; then
+	merge_config partial-deknox-lite
+else
+	merge_config partial-deknox-lite
+	merge_config partial-deknox
+fi
+
 merge_config variant_${BUILD_KERNEL_CODE}
 
 if [[ ${BUILD_KERNEL_PERMISSIVE} == 'true' ]]; then
