@@ -14,7 +14,6 @@ supported.patchlevels=2021-04 -
 
 # shell variables
 block=auto;
-dtbblock=/dev/block/platform/13520000.ufs/by-name/dtb;
 is_slot_device=0;
 ramdisk_compression=auto;
 patch_vbmeta_flag=0;
@@ -109,4 +108,8 @@ flash_boot;
 # Flash dtb
 ui_print "  - Installing Exynos device tree blob (DTB)...";
 flash_generic dtb;
+
+# Flash dtbo
+ui_print "  - Installing device tree blob overlay (DTBO)...";
+flash_generic dtbo;
 ## end boot install
