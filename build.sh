@@ -40,10 +40,10 @@ fi
 
 # Toolchain options
 BUILD_PREF_COMPILER='clang'
-BUILD_PREF_COMPILER_VERSION='rui'
+BUILD_PREF_COMPILER_VERSION='proton'
 
 # Local toolchain directory
-TOOLCHAIN=$HOME/toolchains/rui-clang
+TOOLCHAIN=$HOME/toolchains/exynos9610_toolchains_fresh
 
 # External toolchain directory
 TOOLCHAIN_EXT=$(pwd)/toolchain
@@ -65,7 +65,7 @@ exit_script() {
 }
 
 download_toolchain() {
-	git clone https://git.project-ice.org/brickport-devs/rui-clang ${TOOLCHAIN_EXT} 2>&1 | sed 's/^/     /'
+	git clone https://github.com/TenSeventy7/exynos9610_toolchains_fresh.git ${TOOLCHAIN_EXT} --single-branch -b ${BUILD_PREF_COMPILER_VERSION} --depth 1 2>&1 | sed 's/^/     /'
 	verify_toolchain
 }
 
