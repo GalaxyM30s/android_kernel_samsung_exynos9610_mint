@@ -49,12 +49,7 @@ fi
 if [ ! -z $oneui ]; then
 	if [ -z $fresh ]; then
 		ui_print "  - One UI detected!"
-		ui_print "    - Enabling Pageboost and RAM Plus"
-		patch_prop /vendor/build.prop 'ro.nandswap.level' '2'
-		patch_prop /vendor/build.prop 'ro.nandswap.lru_ratio' '50'
-		patch_prop /vendor/build.prop 'ro.sys.kernelmemory.nandswap.ux_support' 'true'
-		patch_prop /vendor/build.prop 'ro.sys.kernelmemory.nandswap.daily_quota' '786432'
-		patch_prop /vendor/build.prop 'ro.sys.kernelmemory.nandswap.daily_quota_limit' '2359296'
+		ui_print "    - Enabling Pageboost"
 		patch_prop /vendor/build.prop 'ro.config.pageboost.vramdisk.minimize' "true"
 		patch_prop /vendor/build.prop 'ro.config.pageboost.active_launch.enabled' "true"
 		patch_prop /vendor/build.prop 'ro.config.pageboost.io_prefetch.enabled' "true"
@@ -80,21 +75,9 @@ if [ ! -z $oneui ]; then
 	fi
 else
 	ui_print "  - AOSP ROM detected!"
-	ui_print "    - Enabling native ZRAM writeback"
 
 	mkdir -p /vendor/overlay
-	cp -rf $AK_FOLDER/files_aosp/vendor/overlay/MintZramWb.apk /vendor/overlay/MintZramWb.apk
-	cp -rf $AK_FOLDER/files_aosp/vendor/etc/fstab.zram /vendor/etc/fstab.zram
-
-	chmod 644 /vendor/overlay/MintZramWb.apk
-	chmod 644 /vendor/etc/fstab.zram
-
-	patch_prop /vendor/build.prop 'ro.zram.mark_idle_delay_mins' '60'
-	patch_prop /vendor/build.prop 'ro.zram.first_wb_delay_mins' '1440'
-	patch_prop /vendor/build.prop 'ro.zram.periodic_wb_delay_hours' '24'
-	replace_string ${VENDOR_INIT_RC} 'swapon_all /vendor/etc/fstab.dummy' 'swapon_all /vendor/etc/fstab.exynos9610' 'swapon_all /vendor/etc/fstab.zram' global
-	replace_string ${VENDOR_INIT_RC} 'swapon_all /vendor/etc/fstab.dummy' 'swapon_all /vendor/etc/fstab.sqzr' 'swapon_all /vendor/etc/fstab.zram' global
-	append_file ${VENDOR_INIT_RC} 'swapon_all /vendor/etc/fstab.zram' init.zram.rc
+	rm -rf /vendor/overlay/MintZramWb.apk
 fi
 
 umount /system
