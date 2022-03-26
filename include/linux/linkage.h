@@ -31,9 +31,9 @@
 
 #ifndef SYSCALL_ALIAS
 #define SYSCALL_ALIAS(alias, name) asm(			\
-	".globl " __stringify(alias) "\n\t"		\
-	".set   " __stringify(alias) ","		\
-		  __stringify(name))
+	".globl " VMLINUX_SYMBOL_STR(alias) "\n\t"	\
+	".set   " VMLINUX_SYMBOL_STR(alias) ","		\
+		  VMLINUX_SYMBOL_STR(name))
 #endif
 
 #define __page_aligned_data	__section(.data..page_aligned) __aligned(PAGE_SIZE)
@@ -118,15 +118,6 @@
 #ifndef LINKER_SCRIPT
 #define ALIGN __ALIGN
 #define ALIGN_STR __ALIGN_STR
-
-/* === DEPRECATED annotations === */
-
-#ifndef GLOBAL
-/* deprecated, use SYM_DATA*, SYM_ENTRY, or similar */
-#define GLOBAL(name) \
-	.globl name ASM_NL \
-	name:
-#endif
 
 #ifndef ENTRY
 /* deprecated, use SYM_FUNC_START */
